@@ -23,11 +23,24 @@ public class UserServiceTests {
             "Mishti"
 
     })
-    public void testFindByUserName(String userName)
+    public void testUserPasswordNotNull(String userName)
     {
         User user =userService.findByUserName(userName);
         assertNotNull(user.getUserName());
-
     }
+    @ParameterizedTest
+    @CsvSource({
+            "ojas",
+            "Muskan",
+            "Radhika Avhad",
+            "Mishti"
+    })
+    public void testFindByUserName(String userName)
+    {
+        User user =userService.findByUserName(userName);
+        assertNotNull(user.getPassword());
+    }
+
+
 
 }
