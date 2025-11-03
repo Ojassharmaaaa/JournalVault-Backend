@@ -1,5 +1,6 @@
 package net.engineeringdigest.journalApp.controller;
 
+import net.engineeringdigest.journalApp.Service.AIService;
 import net.engineeringdigest.journalApp.Service.JournalEntryService;
 import net.engineeringdigest.journalApp.Service.UserService;
 import net.engineeringdigest.journalApp.entity.JournalEntry;
@@ -28,6 +29,9 @@ public class JournalEntryControlV2 {
   @Autowired
   private UserService userService;
 
+    @Autowired
+    private AIService aiService;
+
     @GetMapping()
     public ResponseEntity<?> getAllJournalEntryByUser()
     {
@@ -53,6 +57,22 @@ public class JournalEntryControlV2 {
 
             journalEntryService.saveEntry(myEntry,userName);
             return new ResponseEntity<>(myEntry,HttpStatus.CREATED);
+        }
+        catch(Exception e)
+        {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping("/improve")
+    public ResponseEntity<?> improveContent(@RequestBody JournalEntry myEntry)
+    {
+        try
+        {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userName = authentication.getName();
+
+            String improved = aiService.improveContent(myEntry.getContent());
+            return ResponseEntity.ok(Map.of("improvedContent", improved));
         }
         catch(Exception e)
         {
